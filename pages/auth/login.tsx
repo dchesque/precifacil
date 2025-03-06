@@ -1,4 +1,3 @@
-// pages/auth/login.tsx
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -18,10 +17,11 @@ export default function Login() {
     setError(null);
 
     try {
-      const { error, success } = await signIn(email, password);
+      const loginResult = await signIn(email, password);
+      console.log('Resultado do login:', loginResult);
       
-      if (success) {
-        router.push('/dashboard');
+      if (loginResult.success && loginResult.redirectTo) {
+        router.push(loginResult.redirectTo);
       } else {
         setError('Email ou senha incorretos. Por favor, tente novamente.');
       }

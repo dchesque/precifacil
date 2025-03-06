@@ -1,16 +1,20 @@
-// pages/_app.tsx
-import '../styles/globals.css';
+import React from 'react';
 import type { AppProps } from 'next/app';
+import '../styles/globals.css';
+
+// Importe os providers
 import { AuthProvider } from '../contexts/AuthContext';
 import { EmpresaProvider } from '../contexts/EmpresaContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
-      <EmpresaProvider>
-        <Component {...pageProps} />
-      </EmpresaProvider>
-    </AuthProvider>
+    <React.StrictMode>
+      <AuthProvider>
+        <EmpresaProvider>
+          <Component {...pageProps} />
+        </EmpresaProvider>
+      </AuthProvider>
+    </React.StrictMode>
   );
 }
 
