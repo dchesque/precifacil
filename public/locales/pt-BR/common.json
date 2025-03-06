@@ -1,0 +1,16 @@
+{
+    "header": {
+      "profile": "Perfil",
+      "settings": "Configurações",
+      "signOut": "Sair",
+      "noNotifications": "Sem notificações"
+    },
+    "pages": {
+      "dashboard": "Dashboard",
+      "supplies": "Insumos",
+      "products": "Produtos",
+      "pricing": "Precificação",
+      "subscriptions": "Assinaturas",
+      "settings": "Configurações"
+    }
+  }
