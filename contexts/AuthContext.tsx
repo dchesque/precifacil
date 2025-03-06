@@ -69,19 +69,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) throw error;
     
-      // Verificação mais detalhada de associações
+      // Verificação das empresas associadas ao usuário
       const { data: associacoes, error: associacoesError } = await supabase
         .from('usuario_empresa')
         .select('*')
         .eq('usuario_id', data.user?.id);
 
       console.log('Associações do usuário:', associacoes);
-      console.log('Erro de associações:', associacoesError);
+      
+      if (associacoesError) {
+        console.error('Erro ao buscar associações:', associacoesError);
+        throw associacoesError;
+      }
 
       // Lógica de redirecionamento
-      const redirectTo = associacoes && associacoes.length > 0 
-        ? '/dashboard' 
-        : '/empresas/nova';
+      let redirectTo = '/empresas/nova'; // Default: criar empresa
+
+      if (associacoes && associacoes.length > 0) {
+        // Tem pelo menos uma empresa
+        if (associacoes.length === 1) {
+          // Apenas uma empresa: vai direto para o dashboard
+          redirectTo = '/dashboard';
+        } else {
+          // Múltiplas empresas: vai para a tela de seleção
+          redirectTo = '/empresas/selecionar';
+        }
+      }
       
       return { 
         error: null, 

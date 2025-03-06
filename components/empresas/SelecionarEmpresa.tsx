@@ -2,6 +2,7 @@
 import { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import { useEmpresa } from '../../contexts/EmpresaContext';
 
 export default function SelecionarEmpresa() {
@@ -45,14 +46,14 @@ export default function SelecionarEmpresa() {
             <div className="border-t border-gray-100 mt-1 pt-1">
               <Menu.Item>
                 {({ active }) => (
-                  
+                  <Link
                     href="/empresas/nova"
                     className={`${
                       active ? 'bg-gray-100' : ''
                     } block px-4 py-2 text-sm text-gray-700`}
                   >
                     + Adicionar nova empresa
-                  </a>
+                  </Link>
                 )}
               </Menu.Item>
             </div>
