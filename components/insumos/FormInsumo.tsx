@@ -64,6 +64,7 @@ export default function FormInsumo({ insumoInicial, modoEdicao = false }: FormIn
       setCategorias(data);
     } catch (err: any) {
       console.error('Erro ao carregar categorias:', err);
+      setError(`Erro ao carregar categorias: ${err.message || 'Erro desconhecido'}`);
     }
   };
   
@@ -91,6 +92,19 @@ export default function FormInsumo({ insumoInicial, modoEdicao = false }: FormIn
     try {
       if (!empresaAtual) {
         throw new Error('Nenhuma empresa selecionada');
+      }
+      
+      // Validações básicas
+      if (formData.preco <= 0) {
+        throw new Error('O preço deve ser maior que zero');
+      }
+      
+      if (formData.precoComDesconto !== undefined && formData.precoComDesconto <= 0) {
+        throw new Error('O preço com desconto deve ser maior que zero');
+      }
+      
+      if (formData.precoComDesconto !== undefined && formData.precoComDesconto >= formData.preco) {
+        throw new Error('O preço com desconto deve ser menor que o preço original');
       }
       
       // Criar nova categoria, se necessário
@@ -185,119 +199,119 @@ export default function FormInsumo({ insumoInicial, modoEdicao = false }: FormIn
                   value={formData.categoriaId || ''}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                >// components/insumos/FormInsumo.tsx (continuação)
-                <option value="">Selecione uma categoria</option>
-                {categorias.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.nome}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => setNovaCategoriaMode(true)}
-                className="ml-2 px-3 py-2 text-sm text-primary-600 hover:text-primary-700"
-              >
-                + Nova
-              </button>
+                >
+                  <option value="">Selecione uma categoria</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.nome}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setNovaCategoriaMode(true)}
+                  className="ml-2 px-3 py-2 text-sm text-primary-600 hover:text-primary-700"
+                >
+                  + Nova
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
+          ) : (
+            <div>
+              <label htmlFor="novaCategoria" className="block text-sm font-medium text-gray-700">
+                Nova Categoria
+              </label>
+              <div className="flex items-center mt-1">
+                <input
+                  type="text"
+                  id="novaCategoria"
+                  value={novaCategoria}
+                  onChange={(e) => setNovaCategoria(e.target.value)}
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Nome da nova categoria"
+                />
+                <button
+                  type="button"
+                  onClick={() => setNovaCategoriaMode(false)}
+                  className="ml-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-700"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+          
           <div>
-            <label htmlFor="novaCategoria" className="block text-sm font-medium text-gray-700">
-              Nova Categoria
+            <label htmlFor="unidadeMedida" className="block text-sm font-medium text-gray-700">
+              Unidade de Medida *
             </label>
-            <div className="flex items-center mt-1">
-              <input
-                type="text"
-                id="novaCategoria"
-                value={novaCategoria}
-                onChange={(e) => setNovaCategoria(e.target.value)}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Nome da nova categoria"
-              />
-              <button
-                type="button"
-                onClick={() => setNovaCategoriaMode(false)}
-                className="ml-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-700"
-              >
-                Cancelar
-              </button>
-            </div>
+            <select
+              id="unidadeMedida"
+              name="unidadeMedida"
+              required
+              value={formData.unidadeMedida}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            >
+              {unidadesMedida.map((unidade) => (
+                <option key={unidade.valor} value={unidade.valor}>
+                  {unidade.nome}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+          
+          <div>
+            <label htmlFor="preco" className="block text-sm font-medium text-gray-700">
+              Preço (R$) *
+            </label>
+            <input
+              type="number"
+              id="preco"
+              name="preco"
+              required
+              step="0.01"
+              min="0.01"
+              value={formData.preco}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="precoComDesconto" className="block text-sm font-medium text-gray-700">
+              Preço com Desconto (R$)
+            </label>
+            <input
+              type="number"
+              id="precoComDesconto"
+              name="precoComDesconto"
+              step="0.01"
+              min="0"
+              value={formData.precoComDesconto || ''}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+        </div>
         
-        <div>
-          <label htmlFor="unidadeMedida" className="block text-sm font-medium text-gray-700">
-            Unidade de Medida *
-          </label>
-          <select
-            id="unidadeMedida"
-            name="unidadeMedida"
-            required
-            value={formData.unidadeMedida}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+        <div className="mt-8 flex justify-end">
+          <button
+            type="button"
+            onClick={() => router.push('/insumos')}
+            className="mr-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
           >
-            {unidadesMedida.map((unidade) => (
-              <option key={unidade.valor} value={unidade.valor}>
-                {unidade.nome}
-              </option>
-            ))}
-          </select>
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+          >
+            {isLoading ? 'Salvando...' : 'Salvar'}
+          </button>
         </div>
-        
-        <div>
-          <label htmlFor="preco" className="block text-sm font-medium text-gray-700">
-            Preço (R$) *
-          </label>
-          <input
-            type="number"
-            id="preco"
-            name="preco"
-            required
-            step="0.01"
-            min="0"
-            value={formData.preco}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="precoComDesconto" className="block text-sm font-medium text-gray-700">
-            Preço com Desconto (R$)
-          </label>
-          <input
-            type="number"
-            id="precoComDesconto"
-            name="precoComDesconto"
-            step="0.01"
-            min="0"
-            value={formData.precoComDesconto || ''}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-          />
-        </div>
-      </div>
-      
-      <div className="mt-8 flex justify-end">
-        <button
-          type="button"
-          onClick={() => router.push('/insumos')}
-          className="mr-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-        >
-          {isLoading ? 'Salvando...' : 'Salvar'}
-        </button>
-      </div>
-    </form>
-  </div>
-);
+      </form>
+    </div>
+  );
 }

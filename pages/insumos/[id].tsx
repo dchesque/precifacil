@@ -11,7 +11,11 @@ export default function DetalheInsumo() {
   return (
     <ProtectedRoute>
       <Layout title="Detalhes do Insumo">
-        {id ? <DetalhesInsumo insumoId={id as string} /> : <div>Carregando...</div>}
+        {id ? (
+          <DetalhesInsumo insumoId={id as string} />
+        ) : (
+          <div className="text-center py-10">Carregando...</div>
+        )}
       </Layout>
     </ProtectedRoute>
   );
